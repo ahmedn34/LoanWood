@@ -1,0 +1,47 @@
+{% load static %}
+<!-- Top Navbar -->
+<header class="navbar">
+  <div class="container navbar-container">
+    <a href="{% url 'core:home' %}" class="navbar-brand" id="brand-logo">
+      <span>Loanwood</span>
+    </a>
+
+    <button class="nav-toggle" id="nav-toggle-btn" aria-label="Toggle navigation" onclick="document.getElementById('primary-nav-links').classList.toggle('show')">
+      ☰
+    </button>
+
+    <nav>
+      <ul class="nav-links" id="primary-nav-links">
+        <li><a href="{% url 'core:home' %}" class="nav-link" id="nav-home">Home</a></li>
+        <li><a href="{% url 'items:browse' %}" class="nav-link" id="nav-browse">Browse Tools</a></li>
+        
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'borrowing:borrower_dashboard' %}" class="nav-link" id="nav-borrowing">My Loans</a></li>
+          <li><a href="{% url 'borrowing:owner_dashboard' %}" class="nav-link" id="nav-owner-dashboard">Lender Hub</a></li>
+          <li>
+            <a href="{% url 'borrowing:notifications' %}" class="nav-link" id="nav-notifications">
+              Notifications
+              {% if unread_notifications_count > 0 %}
+                <span class="badge badge-unread" id="unread-count">{{ unread_notifications_count }}</span>
+              {% endif %}
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'accounts:profile' %}" class="nav-link" id="nav-profile">
+              Profile ({{ user.username }})
+            </a>
+          </li>
+          <li>
+            <form action="{% url 'accounts:logout' %}" method="post" style="display:inline; margin: 0;">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary btn-sm" id="nav-logout">Log Out</button>
+            </form>
+          </li>
+        {% else %}
+          <li><a href="{% url 'accounts:login' %}" class="btn btn-secondary btn-sm" id="nav-login">Sign In</a></li>
+          <li><a href="{% url 'accounts:signup' %}" class="btn btn-primary btn-sm" id="nav-signup">Join Community</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </div>
+</header>

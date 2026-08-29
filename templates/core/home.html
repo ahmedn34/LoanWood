@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Loanwood - Neighborhood Tool Lending Collective{% endblock %}
+
+{% block content %}
+<div class="container">
+  <!-- Tactile Hero Section -->
+  <section class="hero">
+    <div class="hero-badge">🛠️ Neighborhood Tool Collective</div>
+    <h1 class="hero-title">
+      Borrow Tools.<br><span>Build Together.</span>
+    </h1>
+    <p class="hero-subtitle">
+      Why buy when your community can share? Access drills, saws, lawn care gear, ladders, and specialty equipment right on your block.
+    </p>
+
+    <!-- Embedded Fast Search Form -->
+    <form method="get" action="{% url 'items:browse' %}" class="hero-search-form">
+      <input type="text" name="q" placeholder="Search for tools (e.g., miter saw, lawn aerator, hammer drill)..." class="hero-search-input" aria-label="Search tools">
+      <button type="submit" class="btn btn-primary">Find Tool</button>
+    </form>
+
+    <div class="hero-actions">
+      <a href="{% url 'items:browse' %}" class="btn btn-secondary" id="btn-browse-hero">Explore Catalog</a>
+      {% if not user.is_authenticated %}
+        <a href="{% url 'accounts:signup' %}" class="btn btn-forest" id="btn-join-hero">Lend Your Tools</a>
+      {% else %}
+        <a href="{% url 'items:create' %}" class="btn btn-forest" id="btn-list-hero">+ List a Tool</a>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Categories Section -->
+  {% if categories %}
+    <section style="margin-bottom: 3.5rem;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Workshop Categories</h2>
+          <p class="section-subtitle">Find the exact tools you need by project type.</p>
+        </div>
+        <a href="{% url 'items:browse' %}" class="btn btn-secondary btn-sm">All Categories &rarr;</a>
+      </div>
+
+      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
+        {% for cat in categories %}
+          <a href="{% url 'items:browse' %}?category={{ cat.slug }}" class="category-card">
+            <div class="category-icon">
+              {% if 'power' in cat.name|lower or 'drill' in cat.name|lower %}⚡
+              {% elif 'garden' in cat.name|lower or 'lawn' in cat.name|lower %}🌱
+              {% elif 'wood' in cat.name|lower or 'carpentry' in cat.name|lower %}🪚
+              {% elif 'hand' in cat.name|lower %}🔨
+              {% elif 'plumb' in cat.name|lower %}🔧
+              {% elif 'paint' in cat.name|lower %}🎨
+              {% else %}🛠️{% endif %}
+            </div>
+            <h4 style="font-size: 1.05rem; margin-bottom: 0.25rem;">{{ cat.name }}</h4>
+            <span style="font-size: 0.8rem; color: var(--color-ink-muted);">Browse Gear &rarr;</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <!-- Most Borrowed / Community Favorites Grid -->
+  {% if most_borrowed %}
+    <section style="margin-bottom: 4rem;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">🔥 Most Borrowed Tools</h2>
+          <p class="section-subtitle">Neighborhood staples in high demand this season.</p>
+        </div>
+        <a href="{% url 'items:browse' %}" class="btn btn-secondary btn-sm">View Full Catalog &rarr;</a>
+      </div>
+
+      <div class="grid grid-3">
+        {% for item in most_borrowed %}
+          {% include 'includes/_item_card.html' with item=item %}
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+
+  <!-- Workshop Values -->
+  <section style="padding: 1rem 0 2rem;">
+    <div class="grid grid-3">
+      <div class="card card-tactile">
+        <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">⚡</div>
+        <h3 style="margin-bottom: 0.5rem;">Frictionless Lending</h3>
+        <p style="color: var(--color-ink-muted); font-size: 0.92rem;">
+          Request tools with exact date reservations. Owners approve with one click, keeping the neighborhood well-equipped.
+        </p>
+      </div>
+
+      <div class="card card-tactile">
+        <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">🤝</div>
+        <h3 style="margin-bottom: 0.5rem;">Trust & Reputation</h3>
+        <p style="color: var(--color-ink-muted); font-size: 0.92rem;">
+          Track on-time return percentages and condition audits so everyone feels confident sharing their quality gear.
+        </p>
+      </div>
+
+      <div class="card card-tactile">
+        <div style="font-size: 2.2rem; margin-bottom: 0.75rem;">🌱</div>
+        <h3 style="margin-bottom: 0.5rem;">Sustainable Neighborhoods</h3>
+        <p style="color: var(--color-ink-muted); font-size: 0.92rem;">
+          Reduce redundant tool manufacturing, eliminate clutter from your shed, and forge genuine bonds with your neighbors.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

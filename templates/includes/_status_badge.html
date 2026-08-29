@@ -1,0 +1,25 @@
+{% if status == 'pending' %}
+  <span class="badge badge-pending">⏳ Pending Approval</span>
+{% elif status == 'approved' %}
+  <span class="badge badge-approved">✓ Approved (Reserved)</span>
+{% elif status == 'active' %}
+  <span class="badge badge-active">⚡ Active Loan</span>
+{% elif status == 'overdue' %}
+  <span class="badge badge-overdue">⚠️ Overdue</span>
+{% elif status == 'returned' %}
+  <span class="badge badge-returned">📦 Returned</span>
+{% elif status == 'declined' %}
+  <span class="badge badge-declined">✕ Declined</span>
+{% elif status == 'cancelled' %}
+  <span class="badge badge-cancelled">✕ Cancelled</span>
+{% elif status == 'excellent' %}
+  <span class="badge badge-condition-excellent">★ Excellent</span>
+{% elif status == 'good' %}
+  <span class="badge badge-condition-good">✓ Good</span>
+{% elif status == 'fair' %}
+  <span class="badge badge-condition-fair">〰 Fair</span>
+{% elif status == 'worn' %}
+  <span class="badge badge-condition-worn">⚙ Worn</span>
+{% elif status %}
+  <span class="badge badge-returned">{{ status|title }}</span>
+{% endif %}

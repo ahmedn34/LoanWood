@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Request {{ item.title }} - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="max-width: 560px; padding-top: 3.5rem;">
+  <div class="card card-tactile" style="padding: 2.25rem;">
+    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📋</div>
+    <h2 style="font-size: 1.85rem; margin-bottom: 0.35rem;">Request to Borrow</h2>
+    <p style="color: var(--color-ink-muted); margin-bottom: 2rem; font-size: 0.95rem;">
+      Tool: <strong style="color: var(--color-ink);">{{ item.title }}</strong> (Lender: {{ item.owner.username }})
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="alert alert-danger">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="{{ form.start_date.id_for_label }}" class="form-label">Reservation Start Date</label>
+        {{ form.start_date }}
+        {% if form.start_date.errors %}
+          <div class="form-error">{{ form.start_date.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group">
+        <label for="{{ form.end_date.id_for_label }}" class="form-label">Return By Date</label>
+        {{ form.end_date }}
+        {% if form.end_date.errors %}
+          <div class="form-error">{{ form.end_date.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="{{ form.message.id_for_label }}" class="form-label">Project Message (Optional)</label>
+        {{ form.message }}
+        {% if form.message.errors %}
+          <div class="form-error">{{ form.message.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div style="display: flex; gap: 1rem;">
+        <button type="submit" class="btn btn-primary" style="flex: 1;">Submit Request</button>
+        <a href="{% url 'items:detail' item.id %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

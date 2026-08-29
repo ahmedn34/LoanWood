@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Request - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="max-width: 480px; padding-top: 4rem;">
+  <div class="card card-tactile" style="padding: 2.25rem;">
+    <div style="font-size: 2rem; margin-bottom: 0.5rem;">✕</div>
+    <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Cancel Request?</h2>
+    <p style="color: var(--color-ink-muted); margin-bottom: 2rem; font-size: 0.95rem;">
+      Are you sure you want to cancel your pending borrow request for <strong>{{ borrow_req.item.title }}</strong>?
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div style="display: flex; gap: 1rem;">
+        <button type="submit" class="btn btn-secondary" style="color: var(--color-rust); flex: 1;">Yes, Cancel Request</button>
+        <a href="{% url 'borrowing:borrower_dashboard' %}" class="btn btn-secondary">Keep Request</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

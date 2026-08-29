@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Record Return - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="max-width: 540px; padding-top: 3.5rem;">
+  <div class="card card-tactile" style="padding: 2.25rem;">
+    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
+    <h2 style="font-size: 1.85rem; margin-bottom: 0.35rem;">Record Tool Return</h2>
+    <p style="color: var(--color-ink-muted); margin-bottom: 2rem; font-size: 0.95rem;">
+      Record return from <strong>{{ borrow_req.borrower.username }}</strong> for <strong>{{ borrow_req.item.title }}</strong>.
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label for="{{ form.return_condition.id_for_label }}" class="form-label">Inspected Return Condition</label>
+        {{ form.return_condition }}
+        {% if form.return_condition.errors %}
+          <div class="form-error">{{ form.return_condition.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="{{ form.return_note.id_for_label }}" class="form-label">Return Notes & Assessment</label>
+        {{ form.return_note }}
+        {% if form.return_note.errors %}
+          <div class="form-error">{{ form.return_note.errors }}</div>
+        {% endif %}
+        <div class="form-help">Note any wear, missing accessories, or clean returns for community trust records.</div>
+      </div>
+
+      <div style="display: flex; gap: 1rem;">
+        <button type="submit" class="btn btn-primary" style="flex: 1;">Finalize Return</button>
+        <a href="{% url 'borrowing:owner_dashboard' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

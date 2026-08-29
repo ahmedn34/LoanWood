@@ -1,0 +1,92 @@
+{% load static %}
+<div class="ticket-card">
+  <div class="ticket-header">
+    <div>
+      <div style="font-size: 0.76rem; font-weight: 700; color: var(--color-primary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.2rem;">
+        Reservation #{{ req.id }}
+      </div>
+      <h3 style="font-size: 1.2rem; margin-bottom: 0.25rem;">
+        <a href="{% url 'items:detail' req.item.id %}" style="color: var(--color-ink); text-decoration: none;">
+          {{ req.item.title }}
+        </a>
+      </h3>
+      <div style="font-size: 0.86rem; color: var(--color-ink-muted);">
+        {% if is_owner_view %}
+          Requested by: <strong>{{ req.borrower.username }}</strong> ({{ req.borrower.profile.neighborhood|default:"Neighbor" }})
+        {% else %}
+          Lender: <strong>{{ req.item.owner.username }}</strong> ({{ req.item.owner.profile.neighborhood|default:"Neighbor" }})
+        {% endif %}
+      </div>
+    </div>
+
+    <div>
+      {% if req.is_overdue %}
+        {% include 'includes/_status_badge.html' with status='overdue' %}
+      {% else %}
+        {% include 'includes/_status_badge.html' with status=req.status %}
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="ticket-body">
+    <div class="ticket-body-item">
+      <span class="ticket-label">Loan Dates</span>
+      <span class="ticket-value">{{ req.start_date|date:"M d, Y" }} &rarr; {{ req.end_date|date:"M d, Y" }}</span>
+    </div>
+
+    <div class="ticket-body-item">
+      <span class="ticket-label">Initial Condition</span>
+      <div>{% include 'includes/_status_badge.html' with status=req.item.condition %}</div>
+    </div>
+
+    {% if req.return_condition %}
+      <div class="ticket-body-item">
+        <span class="ticket-label">Return Condition</span>
+        <div>{% include 'includes/_status_badge.html' with status=req.return_condition %}</div>
+      </div>
+    {% endif %}
+
+    {% if req.message %}
+      <div class="ticket-body-item" style="grid-column: 1 / -1;">
+        <span class="ticket-label">Borrower Note</span>
+        <span style="font-style: italic; color: var(--color-ink-muted);">"{{ req.message }}"</span>
+      </div>
+    {% endif %}
+
+    {% if req.decline_reason %}
+      <div class="ticket-body-item" style="grid-column: 1 / -1;">
+        <span class="ticket-label">Decline Reason</span>
+        <span style="color: var(--color-rust);">{{ req.decline_reason }}</span>
+      </div>
+    {% endif %}
+
+    {% if req.return_note %}
+      <div class="ticket-body-item" style="grid-column: 1 / -1;">
+        <span class="ticket-label">Return Assessment Note</span>
+        <span style="color: var(--color-ink-muted);">{{ req.return_note }}</span>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="ticket-footer">
+    <span style="font-size: 0.8rem; color: var(--color-ink-muted);">
+      Created {{ req.created_at|timesince }} ago
+    </span>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center; margin-left: auto;">
+      {% if is_owner_view %}
+        {% if req.status == 'pending' %}
+          <a href="{% url 'borrowing:approve_request' req.id %}" class="btn btn-forest btn-sm">Approve</a>
+          <a href="{% url 'borrowing:decline_request' req.id %}" class="btn btn-secondary btn-sm" style="color: var(--color-rust);">Decline</a>
+        {% elif req.status == 'active' or req.status == 'approved' or req.status == 'overdue' %}
+          <a href="{% url 'borrowing:mark_returned' req.id %}" class="btn btn-primary btn-sm">Record Return</a>
+        {% endif %}
+      {% else %}
+        {% if req.status == 'pending' %}
+          <a href="{% url 'borrowing:cancel_request' req.id %}" class="btn btn-secondary btn-sm" style="color: var(--color-rust);">Cancel Request</a>
+        {% endif %}
+      {% endif %}
+      <a href="{% url 'items:detail' req.item.id %}" class="btn btn-secondary btn-sm">View Tool</a>
+    </div>
+  </div>
+</div>

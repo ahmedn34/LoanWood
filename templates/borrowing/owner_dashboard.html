@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Lender Hub - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem;">
+  <!-- Header with Add Tool CTA -->
+  <div class="section-header">
+    <div>
+      <h1 style="font-size: 2.2rem; font-weight: 800;">Lender Hub & Workshop</h1>
+      <p class="section-subtitle">
+        Review incoming neighbor requests, manage tools lent out, and maintain your listed gear.
+      </p>
+    </div>
+    <a href="{% url 'items:create' %}" class="btn btn-primary" id="btn-add-tool-header">
+      + List New Tool
+    </a>
+  </div>
+
+  <!-- Section 1: Incoming Pending Requests -->
+  <section style="margin-bottom: 3.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.45rem;">📬 Incoming Borrow Requests</h2>
+      <span class="badge badge-pending">{{ pending_incoming|length }}</span>
+    </div>
+
+    {% if pending_incoming %}
+      <div class="grid grid-2">
+        {% for req in pending_incoming %}
+          {% include 'includes/_borrow_ticket.html' with req=req is_owner_view=True %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">📬</div>
+        <h3 class="empty-state-title">No Pending Requests</h3>
+        <p class="empty-state-desc">You are all caught up! When neighbors request your gear, they will appear here for approval.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Section 2: Currently Lent Out Gear -->
+  <section style="margin-bottom: 3.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.45rem;">🤝 Currently Lent Out</h2>
+      <span class="badge badge-active">{{ currently_lent|length }}</span>
+    </div>
+
+    {% if currently_lent %}
+      <div class="grid grid-2">
+        {% for req in currently_lent %}
+          {% include 'includes/_borrow_ticket.html' with req=req is_owner_view=True %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">🤝</div>
+        <h3 class="empty-state-title">No Tools Checked Out</h3>
+        <p class="empty-state-desc">All your listed tools are currently available in the community catalog.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Section 3: My Tool Inventory -->
+  <section>
+    <div class="section-header" style="margin-bottom: 1.25rem;">
+      <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <h2 style="font-size: 1.45rem;">🛠️ My Listed Tools</h2>
+        <span class="badge badge-returned">{{ my_items|length }}</span>
+      </div>
+      <a href="{% url 'items:create' %}" class="btn btn-secondary btn-sm">+ Add Another Tool</a>
+    </div>
+
+    {% if my_items %}
+      <div class="grid grid-3">
+        {% for item in my_items %}
+          <div class="polaroid-card">
+            <div class="polaroid-photo-frame">
+              {% if item.photo %}
+                <img src="{{ item.photo.url }}" alt="{{ item.title }}" loading="lazy">
+              {% else %}
+                <img src="{% static 'images/default-tool.svg' %}" alt="{{ item.title }}" class="polaroid-photo-fallback">
+              {% endif %}
+            </div>
+
+            <div class="polaroid-caption">
+              <div class="polaroid-meta">
+                <span class="polaroid-category">{{ item.category.name|default:"Tool" }}</span>
+                {% include 'includes/_status_badge.html' with status=item.condition %}
+              </div>
+
+              <h3 class="polaroid-title">
+                <a href="{% url 'items:detail' item.id %}">{{ item.title }}</a>
+              </h3>
+
+              <p class="polaroid-desc">
+                {{ item.description|truncatewords:14 }}
+              </p>
+
+              <div class="polaroid-footer">
+                <div style="display: flex; gap: 0.4rem; width: 100%; justify-content: flex-end;">
+                  <a href="{% url 'items:update' item.id %}" class="btn btn-secondary btn-sm">Edit</a>
+                  <a href="{% url 'items:delete' item.id %}" class="btn btn-secondary btn-sm" style="color: var(--color-rust);">Remove</a>
+                  <a href="{% url 'items:detail' item.id %}" class="btn btn-secondary btn-sm">View</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">🛠️</div>
+        <h3 class="empty-state-title">No Tools in Your Inventory</h3>
+        <p class="empty-state-desc">Share drills, lawnmowers, ladders, or saws to help out your neighbors.</p>
+        <a href="{% url 'items:create' %}" class="btn btn-primary">+ List Your First Tool</a>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

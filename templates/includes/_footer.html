@@ -1,0 +1,47 @@
+{% load static %}
+<footer class="footer-workshop">
+  <div class="container">
+    <div class="footer-container">
+      <div>
+        <div class="footer-brand">
+          <span>Loanwood</span>
+        </div>
+        <p class="footer-desc">
+          A tactile neighborhood tool collective. Connecting neighbors to share tools, cultivate sustainable habits, and build community together.
+        </p>
+      </div>
+
+      <div>
+        <h4 class="footer-heading">Tool Collective</h4>
+        <ul class="footer-links">
+          <li><a href="{% url 'core:home' %}">Home</a></li>
+          <li><a href="{% url 'items:browse' %}">Browse Tool Catalog</a></li>
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'items:create' %}">+ List a New Tool</a></li>
+            <li><a href="{% url 'borrowing:owner_dashboard' %}">Lender Hub</a></li>
+          {% else %}
+            <li><a href="{% url 'accounts:signup' %}">Join as a Lender / Borrower</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <div>
+        <h4 class="footer-heading">Member Center</h4>
+        <ul class="footer-links">
+          {% if user.is_authenticated %}
+            <li><a href="{% url 'borrowing:borrower_dashboard' %}">My Borrowed Loans</a></li>
+            <li><a href="{% url 'borrowing:notifications' %}">Notifications</a></li>
+            <li><a href="{% url 'accounts:profile' %}">Reputation Profile</a></li>
+          {% else %}
+            <li><a href="{% url 'accounts:login' %}">Sign In</a></li>
+            <li><a href="{% url 'accounts:signup' %}">Create Member Account</a></li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; {% now "Y" %} Loanwood. Made with care for neighborhood workshops everywhere.</p>
+    </div>
+  </div>
+</footer>

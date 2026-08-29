@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign In - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="max-width: 480px; padding-top: 4rem;">
+  <div class="card card-tactile" style="padding: 2.25rem;">
+    <div style="text-align: center; font-size: 2.2rem; margin-bottom: 0.5rem;">🔑</div>
+    <h2 style="font-size: 1.85rem; margin-bottom: 0.35rem; text-align: center;">Welcome Back</h2>
+    <p style="color: var(--color-ink-muted); text-align: center; margin-bottom: 2rem; font-size: 0.95rem;">
+      Sign in to manage your tool checkouts and incoming requests.
+    </p>
+
+    <form method="post" action="{% url 'accounts:login' %}">
+      {% csrf_token %}
+
+      {% if form.errors %}
+        <div class="alert alert-danger">
+          Invalid username or password. Please try again.
+        </div>
+      {% endif %}
+
+      <div class="form-group">
+        <label for="id_username" class="form-label">Username</label>
+        <input type="text" name="username" autofocus required id="id_username" class="form-control">
+      </div>
+
+      <div class="form-group" style="margin-bottom: 2rem;">
+        <label for="id_password" class="form-label">Password</label>
+        <input type="password" name="password" required id="id_password" class="form-control">
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-submit-login">
+        Sign In
+      </button>
+    </form>
+
+    <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px dashed var(--color-card-border); text-align: center; font-size: 0.92rem; color: var(--color-ink-muted);">
+      New to the neighborhood? 
+      <a href="{% url 'accounts:signup' %}" style="font-weight: 700; color: var(--color-primary);">Join Loanwood &rarr;</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Borrower Dashboard - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem;">
+  <!-- Dashboard Header -->
+  <div class="section-header">
+    <div>
+      <h1 style="font-size: 2.2rem; font-weight: 800;">My Borrowing Dashboard</h1>
+      <p class="section-subtitle">
+        Track your active tool reservations, pending approvals, and historical loans.
+      </p>
+    </div>
+    <a href="{% url 'items:browse' %}" class="btn btn-primary">
+      + Borrow Another Tool
+    </a>
+  </div>
+
+  <!-- Section 1: Active & Overdue Loans -->
+  <section style="margin-bottom: 3.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.45rem;">⚡ Active & Current Loans</h2>
+      <span class="badge badge-active">{{ active_overdue|length }}</span>
+    </div>
+
+    {% if active_overdue %}
+      <div class="grid grid-2">
+        {% for req in active_overdue %}
+          {% include 'includes/_borrow_ticket.html' with req=req is_owner_view=False %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">⚡</div>
+        <h3 class="empty-state-title">No Active Loans</h3>
+        <p class="empty-state-desc">You don't currently have any active tool checkouts.</p>
+        <a href="{% url 'items:browse' %}" class="btn btn-secondary btn-sm">Explore Community Tools</a>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Section 2: Pending Requests -->
+  <section style="margin-bottom: 3.5rem;">
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.45rem;">⏳ Pending Requests</h2>
+      <span class="badge badge-pending">{{ pending|length }}</span>
+    </div>
+
+    {% if pending %}
+      <div class="grid grid-2">
+        {% for req in pending %}
+          {% include 'includes/_borrow_ticket.html' with req=req is_owner_view=False %}
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">⏳</div>
+        <h3 class="empty-state-title">No Pending Requests</h3>
+        <p class="empty-state-desc">You don't have any requests currently awaiting owner approval.</p>
+      </div>
+    {% endif %}
+  </section>
+
+  <!-- Section 3: History -->
+  <section>
+    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem;">
+      <h2 style="font-size: 1.45rem;">📜 Borrowing History</h2>
+      <span class="badge badge-returned">{{ history|length }}</span>
+    </div>
+
+    {% if history %}
+      <div class="table-responsive">
+        <table class="table-workshop">
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Lender</th>
+              <th>Period</th>
+              <th>Status</th>
+              <th>Notes / Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in history %}
+              <tr>
+                <td>
+                  <a href="{% url 'items:detail' req.item.id %}" style="font-weight: 700; color: var(--color-ink);">
+                    {{ req.item.title }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{% url 'accounts:user_profile' req.item.owner.username %}">
+                    {{ req.item.owner.username }}
+                  </a>
+                </td>
+                <td style="font-size: 0.88rem;">
+                  {{ req.start_date|date:"M d, Y" }} &rarr; {{ req.end_date|date:"M d, Y" }}
+                </td>
+                <td>
+                  {% include 'includes/_status_badge.html' with status=req.status %}
+                </td>
+                <td style="font-size: 0.86rem; color: var(--color-ink-muted);">
+                  {% if req.decline_reason %}
+                    <span style="color: var(--color-rust);">Declined: {{ req.decline_reason }}</span>
+                  {% elif req.return_note %}
+                    {{ req.return_note }}
+                  {% else %}
+                    -
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-state-icon">📜</div>
+        <h3 class="empty-state-title">No Prior Records</h3>
+        <p class="empty-state-desc">Your completed borrow requests and returned tools will be cataloged here.</p>
+      </div>
+    {% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Remove Tool - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="max-width: 520px; padding-top: 4rem;">
+  <div class="card card-tactile" style="padding: 2.25rem; border-color: #F4C7BE;">
+    <div style="font-size: 2rem; margin-bottom: 0.5rem; color: var(--color-rust);">⚠️</div>
+    <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem; color: var(--color-rust);">Remove "{{ item.title }}"?</h2>
+    <p style="color: var(--color-ink-muted); margin-bottom: 1.75rem; font-size: 0.95rem; line-height: 1.6;">
+      This tool will be soft-deleted and removed from the active catalog. Historical lending records and peer ratings will remain safely archived.
+    </p>
+
+    <form method="post">
+      {% csrf_token %}
+      <div style="display: flex; gap: 1rem;">
+        <button type="submit" class="btn btn-danger" style="flex: 1;">Yes, Remove Tool</button>
+        <a href="{% url 'items:detail' item.id %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

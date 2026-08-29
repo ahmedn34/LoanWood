@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Loanwood - Neighborhood Tool Lending{% endblock %}</title>
+  <meta name="description" content="Community equipment and tactile tool-lending platform for local neighborhoods.">
+  
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+  
+  <!-- Favicon / Logo Icon -->
+  <link rel="icon" type="image/png" href="{% static 'images/IMG_5457.PNG' %}">
+  
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+  <!-- Global Navigation Header -->
+  {% include 'includes/_nav.html' %}
+
+  <!-- Flash Messages -->
+  {% include 'includes/_messages.html' %}
+
+  <!-- Main Content Area -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Global Footer -->
+  {% include 'includes/_footer.html' %}
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Browse Tools - Loanwood Catalog{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem;">
+  <!-- Header & Search Box -->
+  <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 2rem;">
+    <div>
+      <h1 style="font-size: 2.2rem; font-weight: 800;">Neighborhood Tool Catalog</h1>
+      <p style="color: var(--color-ink-muted); margin-top: 0.25rem;">
+        Discover and borrow workshop equipment from nearby neighbors.
+      </p>
+    </div>
+
+    <form method="get" action="{% url 'items:browse' %}" style="display: flex; gap: 0.5rem; flex-grow: 1; max-width: 440px;">
+      {% if selected_category %}
+        <input type="hidden" name="category" value="{{ selected_category.slug }}">
+      {% endif %}
+      <input type="text" name="q" value="{{ q }}" placeholder="Search saws, drills, lawn care..." class="form-control" style="background: #FFFFFF;" aria-label="Search tools">
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+  </div>
+
+  <!-- Category Filter Pills -->
+  <div class="category-pills">
+    <a href="{% url 'items:browse' %}{% if q %}?q={{ q }}{% endif %}" class="category-pill {% if not selected_category %}active{% endif %}">
+      All Categories
+    </a>
+    {% for cat in categories %}
+      <a href="{% url 'items:browse' %}?category={{ cat.slug }}{% if q %}&q={{ q }}{% endif %}" class="category-pill {% if selected_category and selected_category.slug == cat.slug %}active{% endif %}">
+        {{ cat.name }}
+      </a>
+    {% endfor %}
+  </div>
+
+  <!-- Tools Grid / Empty State -->
+  {% if items %}
+    <div class="grid grid-3" style="margin-bottom: 3rem;">
+      {% for item in items %}
+        {% include 'includes/_item_card.html' with item=item %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="empty-state" style="margin-bottom: 3rem;">
+      <div class="empty-state-icon">🛠️</div>
+      <h3 class="empty-state-title">No tools found</h3>
+      <p class="empty-state-desc">
+        We couldn't find any available tools matching your current search or category filter.
+      </p>
+      <a href="{% url 'items:browse' %}" class="btn btn-secondary">Clear Filters</a>
+    </div>
+  {% endif %}
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+    <div style="display: flex; justify-content: center; align-items: center; gap: 0.5rem; margin-top: 2rem;">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" class="btn btn-secondary btn-sm">
+          &larr; Previous
+        </a>
+      {% endif %}
+
+      <span style="font-size: 0.9rem; color: var(--color-ink-muted); padding: 0 0.75rem;">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+      </span>
+
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if q %}&q={{ q }}{% endif %}{% if selected_category %}&category={{ selected_category.slug }}{% endif %}" class="btn btn-secondary btn-sm">
+          Next &rarr;
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

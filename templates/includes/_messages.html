@@ -1,0 +1,15 @@
+{% if messages %}
+  <div class="container messages-wrapper">
+    {% for message in messages %}
+      <div class="alert {% if message.tags == 'error' or message.tags == 'danger' %}alert-danger{% elif message.tags == 'warning' %}alert-warning{% elif message.tags == 'info' %}alert-info{% else %}alert-success{% endif %}">
+        <span class="alert-icon">
+          {% if message.tags == 'error' or message.tags == 'danger' %}⚠️
+          {% elif message.tags == 'warning' %}⏳
+          {% elif message.tags == 'info' %}ℹ️
+          {% else %}✓{% endif %}
+        </span>
+        <div>{{ message }}</div>
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}

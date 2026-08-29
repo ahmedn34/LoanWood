@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Approve Borrow Request - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container container-narrow" style="max-width: 520px; padding-top: 4rem;">
+  <div class="card card-tactile" style="padding: 2.25rem;">
+    <div style="font-size: 2rem; margin-bottom: 0.5rem;">🤝</div>
+    <h2 style="font-size: 1.75rem; margin-bottom: 0.5rem;">Approve Request?</h2>
+    <p style="color: var(--color-ink-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
+      You are approving reservation for <strong>{{ borrow_req.item.title }}</strong> requested by <strong>{{ borrow_req.borrower.username }}</strong>.
+    </p>
+
+    <div class="ticket-card" style="margin-bottom: 1.5rem;">
+      <div class="ticket-body" style="grid-template-columns: 1fr;">
+        <div class="ticket-body-item">
+          <span class="ticket-label">Reservation Dates</span>
+          <span class="ticket-value">{{ borrow_req.start_date|date:"M d, Y" }} &rarr; {{ borrow_req.end_date|date:"M d, Y" }}</span>
+        </div>
+        {% if borrow_req.message %}
+          <div class="ticket-body-item" style="margin-top: 0.5rem;">
+            <span class="ticket-label">Borrower Note</span>
+            <span style="font-style: italic; color: var(--color-ink-muted);">"{{ borrow_req.message }}"</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="alert alert-warning" style="margin-bottom: 1.75rem; font-size: 0.88rem;">
+      ⚡ Note: Approving will reserve this tool and automatically decline any conflicting overlapping requests.
+    </div>
+
+    <form method="post">
+      {% csrf_token %}
+      <div style="display: flex; gap: 1rem;">
+        <button type="submit" class="btn btn-forest" style="flex: 1;">Confirm Approval</button>
+        <a href="{% url 'borrowing:owner_dashboard' %}" class="btn btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <linearGradient id="toolBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="woodGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    <linearGradient id="metalGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#cbd5e1"/>
+      <stop offset="100%" stop-color="#64748b"/>
+    </linearGradient>
+    <filter id="toolGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded card -->
+  <rect width="200" height="200" rx="28" fill="url(#toolBg)"/>
+  
+  <!-- Subtle border -->
+  <rect x="2" y="2" width="196" height="196" rx="26" fill="none" stroke="#334155" stroke-width="2"/>
+
+  <g filter="url(#toolGlow)">
+    <!-- Crossed Hammer and Wrench Symbol -->
+    <!-- Wrench (diagonal bottom-left to top-right) -->
+    <g transform="rotate(45 100 100)">
+      <!-- Wrench Handle -->
+      <rect x="92" y="45" width="16" height="110" rx="8" fill="url(#metalGradient)"/>
+      <!-- Wrench Head Top -->
+      <path d="M 85 45 C 85 30, 115 30, 115 45 L 107 50 L 107 58 L 93 58 L 93 50 Z" fill="url(#metalGradient)"/>
+      <circle cx="100" cy="38" r="8" fill="#1e293b"/>
+      <!-- Wrench Head Bottom (Ring) -->
+      <circle cx="100" cy="155" r="14" fill="url(#metalGradient)"/>
+      <circle cx="100" cy="155" r="7" fill="#1e293b"/>
+    </g>
+
+    <!-- Hammer (diagonal top-left to bottom-right) -->
+    <g transform="rotate(-45 100 100)">
+      <!-- Hammer Handle (Wood) -->
+      <rect x="93" y="48" width="14" height="106" rx="6" fill="url(#woodGradient)"/>
+      <rect x="91" y="125" width="18" height="28" rx="4" fill="#334155"/>
+      <!-- Hammer Head (Metal) -->
+      <path d="M 72 40 L 128 40 C 132 40, 134 44, 134 48 L 134 56 C 134 60, 132 64, 128 64 L 72 64 C 68 64, 66 60, 66 56 L 66 48 C 66 44, 68 40, 72 40 Z" fill="url(#metalGradient)"/>
+      <!-- Hammer Claw -->
+      <path d="M 72 40 C 60 42, 54 52, 52 64 L 62 64 C 64 56, 68 48, 74 46 Z" fill="url(#metalGradient)"/>
+    </g>
+  </g>
+</svg>

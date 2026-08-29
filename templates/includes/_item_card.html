@@ -1,0 +1,34 @@
+{% load static %}
+<div class="polaroid-card">
+  <div class="polaroid-photo-frame">
+    {% if item.photo %}
+      <img src="{{ item.photo.url }}" alt="{{ item.title }}" loading="lazy">
+    {% else %}
+      <img src="{% static 'images/default-tool.svg' %}" alt="{{ item.title }}" class="polaroid-photo-fallback">
+    {% endif %}
+  </div>
+
+  <div class="polaroid-caption">
+    <div class="polaroid-meta">
+      <span class="polaroid-category">{{ item.category.name|default:"Tool" }}</span>
+      {% include 'includes/_status_badge.html' with status=item.condition %}
+    </div>
+
+    <h3 class="polaroid-title">
+      <a href="{% url 'items:detail' item.id %}">{{ item.title }}</a>
+    </h3>
+
+    <p class="polaroid-desc">
+      {{ item.description|truncatewords:16 }}
+    </p>
+
+    <div class="polaroid-footer">
+      <div class="polaroid-owner">
+        <span>📍 {{ item.owner.profile.neighborhood|default:"Neighbor" }}</span>
+      </div>
+      <a href="{% url 'items:detail' item.id %}" class="btn btn-secondary btn-sm">
+        Details &rarr;
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Borrow Requests - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem;">
+  <div class="section-header">
+    <div>
+      <h1 style="font-size: 2.2rem; font-weight: 800;">My Tool Loans & Requests</h1>
+      <p class="section-subtitle">Manage active loans and incoming tool requests.</p>
+    </div>
+  </div>
+
+  {% if borrow_requests %}
+    <div class="table-responsive">
+      <table class="table-workshop">
+        <thead>
+          <tr>
+            <th>Tool</th>
+            <th>Owner</th>
+            <th>Period</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in borrow_requests %}
+            <tr>
+              <td>
+                <a href="{% url 'items:detail' req.item.id %}" style="font-weight: 700; color: var(--color-ink);">
+                  {{ req.item.title }}
+                </a>
+              </td>
+              <td>
+                <a href="{% url 'accounts:user_profile' req.item.owner.username %}">
+                  {{ req.item.owner.username }}
+                </a>
+              </td>
+              <td style="font-size: 0.88rem;">{{ req.start_date|date:"M d, Y" }} &rarr; {{ req.end_date|date:"M d, Y" }}</td>
+              <td>
+                {% include 'includes/_status_badge.html' with status=req.status %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <div class="empty-state-icon">📋</div>
+      <h3 class="empty-state-title">No Requests Found</h3>
+      <p class="empty-state-desc">You don't have any active or past borrow requests.</p>
+      <a href="{% url 'items:browse' %}" class="btn btn-primary">Browse Catalog</a>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

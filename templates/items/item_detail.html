@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ item.title }} - Loanwood{% endblock %}
+
+{% block content %}
+<div class="container" style="padding-top: 2.5rem;">
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; align-items: start;">
+    
+    <!-- Tool Media & Description Column -->
+    <div>
+      <div class="card card-tactile" style="padding: 1.75rem; margin-bottom: 2rem;">
+        <div class="polaroid-photo-frame" style="height: 340px; margin-bottom: 1.5rem;">
+          {% if item.photo %}
+            <img src="{{ item.photo.url }}" alt="{{ item.title }}" style="width: 100%; height: 100%; object-fit: cover;">
+          {% else %}
+            <img src="{% static 'images/default-tool.svg' %}" alt="{{ item.title }}" style="width: 110px; height: 110px; opacity: 0.75;">
+          {% endif %}
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.5rem;">
+          <span style="font-size: 0.82rem; color: var(--color-primary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em;">
+            {{ item.category.name|default:"General Equipment" }}
+          </span>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            {% include 'includes/_status_badge.html' with status=item.condition %}
+            {% if currently_borrowed %}
+              <span class="badge badge-pending">Currently Checked Out</span>
+            {% else %}
+              <span class="badge badge-active">Available to Borrow</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <h1 style="font-size: 2.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 1rem;">{{ item.title }}</h1>
+        
+        <div style="color: var(--color-ink); font-size: 0.98rem; line-height: 1.7; white-space: pre-line; margin-bottom: 1.5rem;">
+          {{ item.description }}
+        </div>
+
+        {% if is_owner %}
+          <div style="border-top: 1px dashed var(--color-card-border); padding-top: 1.25rem; display: flex; gap: 0.75rem;">
+            <a href="{% url 'items:update' item.id %}" class="btn btn-secondary btn-sm" id="btn-edit-item">Edit Tool</a>
+            <a href="{% url 'items:delete' item.id %}" class="btn btn-secondary btn-sm" style="color: var(--color-rust); border-color: #F4C7BE;" id="btn-delete-item">Remove Tool</a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Owner Information & Borrow Form Column -->
+    <div>
+      <!-- Owner Bio Card -->
+      <div class="card card-tactile" style="margin-bottom: 1.75rem;">
+        <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 1.25rem; border-bottom: 1px solid var(--color-card-border-subtle); padding-bottom: 0.75rem;">
+          Lender Profile
+        </h3>
+        
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.25rem;">
+          <div style="width: 58px; height: 58px; border-radius: 50%; overflow: hidden; background: var(--color-surface-warm); border: 2px solid var(--color-card-border); flex-shrink: 0;">
+            {% if item.owner.profile.avatar %}
+              <img src="{{ item.owner.profile.avatar.url }}" alt="{{ item.owner.username }}" style="width: 100%; height: 100%; object-fit: cover;">
+            {% else %}
+              <img src="{% static 'images/default-avatar.svg' %}" alt="Avatar" style="width: 100%; height: 100%;">
+            {% endif %}
+          </div>
+          <div>
+            <h4 style="font-size: 1.15rem; font-weight: 700;">
+              <a href="{% url 'accounts:user_profile' item.owner.username %}" style="color: var(--color-ink); text-decoration: none;">
+                {{ item.owner.username }}
+              </a>
+            </h4>
+            <p style="color: var(--color-ink-muted); font-size: 0.85rem; margin-bottom: 0;">
+              📍 {{ item.owner.profile.neighborhood|default:"Verified Neighbor" }}
+            </p>
+          </div>
+        </div>
+
+        {% if item.owner.profile.bio %}
+          <p style="color: var(--color-ink-muted); font-size: 0.9rem; margin-bottom: 1.25rem; line-height: 1.5;">
+            {{ item.owner.profile.bio }}
+          </p>
+        {% endif %}
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; background: var(--color-surface-warm); padding: 0.85rem; border-radius: var(--radius-sm); text-align: center;">
+          <div>
+            <div style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--color-secondary);">
+              {{ owner_stats.items_owned }}
+            </div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-ink-muted); text-transform: uppercase;">
+              Tools Listed
+            </div>
+          </div>
+          <div>
+            <div style="font-family: var(--font-heading); font-size: 1.35rem; font-weight: 800; color: var(--color-amber);">
+              {% if owner_stats.on_time_rate is not None %}{{ owner_stats.on_time_rate }}%{% else %}100%{% endif %}
+            </div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: var(--color-ink-muted); text-transform: uppercase;">
+              On-Time Rate
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Borrow Request Ticket / Form Card -->
+      <div class="card card-tactile">
+        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 0.35rem;">Request Reservation</h3>
+        <p style="color: var(--color-ink-muted); font-size: 0.88rem; margin-bottom: 1.5rem;">
+          Select your required lending dates (up to 30 days per loan).
+        </p>
+
+        {% if user.is_authenticated %}
+          {% if is_owner %}
+            <div style="background: var(--color-amber-light); border: 1.5px solid #EBD4B4; color: #8C5919; padding: 1rem; border-radius: var(--radius-sm); font-size: 0.9rem;">
+              ℹ️ You own this tool. Manage incoming borrower requests on your 
+              <a href="{% url 'borrowing:owner_dashboard' %}" style="font-weight: 700; text-decoration: underline;">Lender Hub</a>.
+            </div>
+          {% else %}
+            <form method="post" action="{% url 'borrowing:create_request' item.id %}">
+              {% csrf_token %}
+
+              <div class="form-group">
+                <label for="{{ borrow_form.start_date.id_for_label }}" class="form-label">Reservation Start Date</label>
+                {{ borrow_form.start_date }}
+                {% if borrow_form.start_date.errors %}
+                  <div class="form-error">{{ borrow_form.start_date.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="form-group">
+                <label for="{{ borrow_form.end_date.id_for_label }}" class="form-label">Return By Date</label>
+                {{ borrow_form.end_date }}
+                {% if borrow_form.end_date.errors %}
+                  <div class="form-error">{{ borrow_form.end_date.errors }}</div>
+                {% endif %}
+              </div>
+
+              <div class="form-group">
+                <label for="{{ borrow_form.message.id_for_label }}" class="form-label">Project Note (Optional)</label>
+                {{ borrow_form.message }}
+                {% if borrow_form.message.errors %}
+                  <div class="form-error">{{ borrow_form.message.errors }}</div>
+                {% endif %}
+                <div class="form-help">Let {{ item.owner.username }} know what project you're tackling.</div>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-submit-borrow">
+                Submit Borrow Request
+              </button>
+            </form>
+          {% endif %}
+        {% else %}
+          <div style="text-align: center; padding: 1.5rem 0;">
+            <p style="color: var(--color-ink-muted); margin-bottom: 1.25rem;">
+              Sign in to send a borrow request to {{ item.owner.username }}.
+            </p>
+            <a href="{% url 'accounts:login' %}?next={{ request.path }}" class="btn btn-primary btn-block">
+              Sign In to Borrow
+            </a>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
